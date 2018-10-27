@@ -1,15 +1,17 @@
+import random
+import matplotlib.pyplot as plt
 import numpy as np
 
 """function to be integrated """
 
 
 def f(x):
-    # y = 1 / np.sqrt(2 * np.pi) * np.exp(-(1 / 2) * np.square(x))
-    y = np.sqrt(14 * np.square(x)) / 32**x
+    y = 1 / 7**x
     return y
 
 
 """perform MonteCarlo Integration
+
 
     lb: lower bound of the integration
     ub: upper bound of the integration
@@ -18,6 +20,26 @@ def f(x):
 
 
 def MC_integrate(lb, ub, n):
+    # initializing minimum and maximum y
+    y_min = f(lb)
+    y_max = y_min
+    for i in np.linspace(lb, ub, 1000):
+        # determine y_min and y_max
+        if f(i) < y_min:
+            y_min = f(i)
+        if f(i) > y_max:
+            y_max = f(i)
+
+    # calculate the area where the graph is contained ( not the area under the
+    # graph!
+    interval_area = (ub - lb) * (y_max)
+
+    # initialize plot
+    plt.ion()
+    # plot the graph of f(x)
+    plt.plot(np.linspace(lb, ub, 100),
+             f(np.linspace(lb, ub, 100)), color='b')
+
     # create an array to hold the 'hits' and one to hold the 'misses'
     hits = []
     misses = []
@@ -26,31 +48,30 @@ def MC_integrate(lb, ub, n):
     # distribution over the stated interval
     x_rand = []
     y_rand = []
-    y_min = f(lb)
-    y_max = y_min
+
     for i in range(n):
-        x_rand.append((ub - lb) * np.random.random_sample() + lb)
-        y_rand.append((ub - lb) * np.random.random_sample() + lb)
+        # generate a random point in the given interval
+        x_rand.append((ub - lb) * random.random() + lb)
+        y_rand.append((ub - lb) * random.random() + lb)
+
         # now check whether the Point P(x,y) lies under the graph of f(x)
         # therefore y < f(x)
         if y_rand[i] < f(x_rand[i]):
-            hits.append((x_rand, y_rand))
+            hits.append((x_rand[i], y_rand[i]))
+            plt.scatter(x_rand[i], y_rand[i], color='g')
+
         else:
-            misses.append((x_rand, y_rand))
+            misses.append((x_rand[i], y_rand[i]))
+            plt.scatter(x_rand[i], y_rand[i], color='r')
+        # calculate the ratio of hits to whole number of samples
+        ratio = len(hits) / n
 
-        # determine y_min and y_max
-        if f(x_rand[i]) < y_min:
-            y_min = f(x_rand[i])
-        if f(x_rand[i]) > y_max:
-            y_max = f(x_rand[i])
-    print(len(hits))
-    print(y_max, y_min)
-    ratio = len(hits) / n
-    interval_area = (ub - lb) * (2)
-    print(interval_area)
-    Area = ratio * interval_area
-    return Area
+        # calculate the area UNDER the graph aka the integral
+        Area = ratio * interval_area
+        plt.legend(['Area = {}'.format(Area)], loc=1,)
+        plt.draw()
+        plt.pause(0.0001)
+    print('Area of f(x): ' + str(Area))
 
 
-if __name__ == '__main__':
-    print(MC_integrate(0, 1, 1000))
+MC_integrate(0, 1, 1000)
