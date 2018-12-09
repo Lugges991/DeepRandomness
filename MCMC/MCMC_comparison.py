@@ -1,7 +1,18 @@
 import tensorflow_probability as tfp
 import tensorflow as tf
 import numpy as np
+
 tfd = tfp.distributions
+dtype = np.float32
+
+# global variables
+true_mean = dtype([0, 0])
+true_cov = dtype([[1, 0.5],
+                  [0.5, 1]])
+
+# Target distribution is defined through the Cholesky decomposition `L`:
+L = tf.linalg.cholesky(true_cov)
+target = tfd.MultivariateNormalTriL(loc=true_mean, scale_tril=L)
 
 
 # Assume that the state is passed as a list of 1-d tensors `x` and `y`.
@@ -34,18 +45,7 @@ def sample_MHMCMC(data):
     pass
 
 
-def sample_RWMCMC():
-
-    dtype = np.float32
-    true_mean = dtype([0, 0])
-    true_cov = dtype([[1, 0.5],
-                      [0.5, 1]])
-    num_results = 500
-    num_chains = 100
-
-    # Target distribution is defined through the Cholesky decomposition `L`:
-    L = tf.linalg.cholesky(true_cov)
-    target = tfd.MultivariateNormalTriL(loc=true_mean, scale_tril=L)
+def sample_RWMCMC(n_dims, num_results=1000, num_chains=100):
 
     # Initial state of the chain
     init_state = [np.ones([num_chains, 1], dtype=dtype),
@@ -76,17 +76,11 @@ def sample_RWMCMC():
                                 shape=[2 * 2, 2 * 2])
 
     with tf.Session() as sess:
-        [
-            mean_sample_mean_,
-            mean_sample_cov_,
-            cov_sample_cov_,
-        ] = sess.run([
-            mean_sample_mean,
-            mean_sample_cov,
-            cov_sample_cov,
-        ])
+        [mean_sample_mean_, mean_sample_cov_, cov_sample_cov_, ] = sess.run(
+            [mean_sample_mean, mean_sample_cov, cov_sample_cov, ])
 
-        print('Estimated mean: {}'.format(mean_sample_mean_))
+        print('Estimated mean: {}'.format(
+            mean_sample_mean_), samples.eval().mean())
         print('Estimated avg covariance: {}'.format(mean_sample_cov_))
         print('Estimated covariance of covariance: {}'.format(cov_sample_cov_))
 
@@ -106,4 +100,4 @@ def sample_HMC():
 
 
 if __name__ == '__main__':
-    mean, cov, gauss = sample_simple_random()
+    sample_RWMCMC(n_dims=2)
