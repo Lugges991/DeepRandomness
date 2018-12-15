@@ -1,23 +1,26 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-"""define a target distribution"""
-
 
 def circle(X):
+    """define a target distribution"""
     return (X[0, 0]-1)**2 + (X[0, 1]-2)**2 - 3**2
 
 
-"""define any distribution as the proposal distribution"""
-
-
 def proposal_distribution(X):
+    """define any distribution as the proposal distribution"""
     mean = X.reshape(-1,)
     covariance = np.array([[1, 0], [0, 100]])
     return np.random.multivariate_normal(mean, covariance, 1)
 
 
 def MetropolisHastingsMCMC(p, n):
+    """perform the Metropolis Hastings algorithm on the specified target and
+    proposal distributions
+
+    @param  p   target distribution
+    @param  n   number of iterations
+    """
     # initialize the array to hold the samples
     accepted = np.zeros((n, 2))
 
