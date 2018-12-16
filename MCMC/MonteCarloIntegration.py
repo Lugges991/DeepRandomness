@@ -2,24 +2,22 @@ import random
 import matplotlib.pyplot as plt
 import numpy as np
 
-"""function to be integrated """
-
 
 def f(x):
+    """function to be integrated """
     y = 1 / 7**x
     return y
 
 
-"""perform MonteCarlo Integration
-
-
-    lb: lower bound of the integration
-    ub: upper bound of the integration
-    n: number of random samples
-"""
-
-
 def MC_integrate(lb, ub, n):
+    """perform MonteCarlo Integration
+
+
+    @param  lb: lower bound of the integration
+    @param  ub: upper bound of the integration
+    @param  n: number of random samples
+    """
+
     # initializing minimum and maximum y
     y_min = f(lb)
     y_max = y_min

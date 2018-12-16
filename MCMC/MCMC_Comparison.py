@@ -48,6 +48,7 @@ class MCMC_Comp:
         return _sample, _kernel_res
 
     def sample_HMC(self, num_results=1000, num_burnin=200):
+        """ perform HMC.... still problems to match dimensions!"""
         # Create state to hold updated `step_size`.
         step_size = tf.get_variable(
             name='step_size',
@@ -75,20 +76,24 @@ class MCMC_Comp:
 
 
 if __name__ == '__main__':
+    # define mean and covariance to sample from
     true_mean = dtype([0, 0])
     true_cov = dtype([[1, 0.5],
                       [0.5, 1]])
 
+    # create the comparison object
     comp = MCMC_Comp(true_mean, true_cov)
     rw_samples, rw_kernel = comp.sample_RWMCMC()
     hmc_samples, hmc_kernel = comp.sample_HMC()
 
+    # plot the samples for random walk
     plt.subplot(2, 1, 1)
     plt.scatter(rw_samples[-1], range(len(rw_samples)), color='r')
     plt.title('Random-Walk Metropolis')
     plt.ylabel('Last position variable')
     plt.xlabel('Iteration')
 
+    # plot the samples for hamiltonian Monte Carlo
     plt.scatter(hmc_samples[-1], range(len(hmc_samples[-1])), color='g')
     plt.title('Hamiltonian Monte Carlo')
     plt.ylabel('Last position variable')
