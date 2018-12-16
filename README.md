@@ -1,11 +1,12 @@
-## MonteCarlo
+# MonteCarlo
 Examples of how different Monte Carlo methods could be realized in python
 
-# Requirements
+## Usage
+Run the desired script. The documentation should suffice.
+
+## Requirements
 - Python3 
 - NumPy
 - matplotlib
 - tensorflow_probability
 
-# Usage
-Run the desired script. The documentation should suffice.
